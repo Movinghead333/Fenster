@@ -7,9 +7,9 @@ public class StatsPanelUIC : MonoBehaviour
     public TMP_Text IncorrectGuessesText;
     public TMP_Text CardsRerolledText;
 
-    public void SetTimeText(float time)
+    public void SetTimeText(string timeText)
     {
-        TimeText.text = time.ToString("0.000");
+        TimeText.text = timeText;
     }
 
     public void SetIncorrectGuessesText(int incorrectGuesses)

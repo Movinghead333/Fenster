@@ -11,9 +11,9 @@ namespace FensterGame
         public readonly static int[,] FensterLayout =
         {
             { 0,0,1,2,2,2,1 },
-            { 1,0,2,0,2,0,2 },
-            { 2,2,2,2,2,2,2 },
             { 0,0,2,0,2,0,2 },
+            { 2,2,2,2,2,2,2 },
+            { 1,0,2,0,2,0,2 },
             { 0,0,1,2,2,2,1 },
         };
 
@@ -161,7 +161,10 @@ namespace FensterGame
         /// <returns></returns>
         public bool IsCardSelectableForReveal(int x, int y)
         {
-            return Field[y, x].HasValue && !Field[y, x].Value.Revealed && GetRevealedNeighbouringCards(x, y).Count > 0;
+            return Field[y, x].HasValue &&
+                !Field[y, x].Value.Revealed &&
+                GetRevealedNeighbouringCards(x, y).Count > 0 &&
+                !WaitingForContinueAfterIncorrectGuess;
         }
 
         public bool IsCardSelectableForReset(int x, int y)

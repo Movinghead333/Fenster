@@ -28,7 +28,7 @@ public class PlayCardUIC : MonoBehaviour
         }
         else if (CardHighlightStatus == CardHighlightStatus.Selectable)
         {
-            CardImage.color = new Color(0.5f, 1f, 0.5f);
+            CardImage.color = new Color(0.6f, 1f, 0.6f);
         }
     }
 

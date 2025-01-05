@@ -30,6 +30,7 @@ public class FensterUIC : MonoBehaviour
     public GameObject PlayCardPrefab;
     public PlayCardUIC[,] PlayCardUICs;
     public FensterGameManager FensterGameManagerInstance;
+    public GameObject GuessButtonsPanel;
 
     public Vector2Int? SelectedCardCoordinates = null;
     public GuessType? SelectedGuessType = null;
@@ -41,26 +42,23 @@ public class FensterUIC : MonoBehaviour
     {
         FensterGameManagerInstance = new FensterGameManager();
 
-        int xOffset = -300;
-        int yOffset = -330;
-        int xStride = 150;
-        int yStride = 165;
         PlayCardUICs = new PlayCardUIC[FensterGameManager.FensterLayout.GetLength(0), FensterGameManager.FensterLayout.GetLength(1)];
         for (int y = 0; y < FensterGameManager.FensterLayout.GetLength(0); y++)
         {
             for (int x = 0; x < FensterGameManager.FensterLayout.GetLength(1); x++)
             {
+                Vector3 rotationAngles = new Vector3(0, 0, x % 2 == 1 ? 90 : 0);
+                GameObject cardGO = Instantiate(PlayCardPrefab, Vector3.zero, Quaternion.Euler(rotationAngles), GameCanvas.transform);
+
                 if (FensterGameManager.FensterLayout[y, x] != 0)
                 {
-                    Vector3 position = new Vector3(xOffset + x * xStride, yOffset + y * yStride, 0);
-                    Vector3 rotationAngles = new Vector3(0, 0, x % 2 == 1 ? 90 : 0);
-                    GameObject cardGO = Instantiate(PlayCardPrefab, position, Quaternion.Euler(rotationAngles), GameCanvas.transform);
-                    cardGO.transform.localPosition = position;
-                    PlayCardUICs[y, x] = cardGO.GetComponent<PlayCardUIC>();
+
+                    PlayCardUICs[y, x] = cardGO.GetComponentInChildren<PlayCardUIC>();
                     PlayCardUICs[y, x].CardCoordinates = new Vector2Int(x, y);
                 }
                 else
                 {
+                    cardGO.GetComponentInChildren<PlayCardUIC>().gameObject.SetActive(false);
                     PlayCardUICs[y, x] = null;
                 }
             }
@@ -72,7 +70,8 @@ public class FensterUIC : MonoBehaviour
 
     private void Update()
     {
-        StatsPanelUIC.SetTimeText(_stopwatch.ElapsedMilliseconds / 1000.0f);
+        int seconds = _stopwatch.Elapsed.Seconds;
+        StatsPanelUIC.SetTimeText(new DateTime(_stopwatch.Elapsed.Ticks).ToString("mm:ss"));
     }
 
     public void OnCardSelected(Vector2Int cardCoordinates)
@@ -81,10 +80,11 @@ public class FensterUIC : MonoBehaviour
         {
             FensterGameManagerInstance.ProcessContinueCommand();
             UpdateCards();
+            StatsPanelUIC.SetIncorrectGuessesText(FensterGameManagerInstance.IncorrectGuesses);
+            StatsPanelUIC.SetCardsRerolledText(FensterGameManagerInstance.CardsRerolled);
             return;
         }
-
-        if (FensterGameManagerInstance.IsCardSelectableForReveal(cardCoordinates.x, cardCoordinates.y))
+        else if (FensterGameManagerInstance.IsCardSelectableForReveal(cardCoordinates.x, cardCoordinates.y))
         {
             if (SelectedCardCoordinates.HasValue)
             {
@@ -93,11 +93,15 @@ public class FensterUIC : MonoBehaviour
                 if (cardCoordinates == SelectedCardCoordinates.Value)
                 {
                     SelectedCardCoordinates = null;
+                    GuessButtonsPanel.gameObject.SetActive(false);
                     UpdateCards();
                     Debug.Log($"Deselecting selected card (x: {cardCoordinates.x}, y: {cardCoordinates.y})");
                     return;
                 }
             }
+
+            GuessButtonsPanel.gameObject.SetActive(true);
+            GuessButtonsPanel.transform.position = Input.mousePosition;
 
             SelectedCardCoordinates = cardCoordinates;
             PlayCardUICs[SelectedCardCoordinates.Value.y, SelectedCardCoordinates.Value.x].SetCardHighlightStatus(CardHighlightStatus.Selected);
@@ -139,13 +143,11 @@ public class FensterUIC : MonoBehaviour
                 SelectedCardCoordinates.Value.x, SelectedCardCoordinates.Value.y, SelectedGuessType.Value
             ));
 
-            StatsPanelUIC.SetIncorrectGuessesText(FensterGameManagerInstance.IncorrectGuesses);
-            StatsPanelUIC.SetCardsRerolledText(FensterGameManagerInstance.CardsRerolled);
-
             Debug.Log($"Guess correct: {guessCorrect}");
 
             PlayCardUICs[SelectedCardCoordinates.Value.y, SelectedCardCoordinates.Value.x].SetCardHighlightStatus(CardHighlightStatus.None);
             SelectedCardCoordinates = null;
+            GuessButtonsPanel.gameObject.SetActive(false);
             UpdateCards();
         }
     }
@@ -166,7 +168,7 @@ public class FensterUIC : MonoBehaviour
                 if (FensterGameManagerInstance.IsCardSelectableForReveal(x, y) && SelectedCardCoordinates == null && !FensterGameManagerInstance.WaitingForContinueAfterIncorrectGuess)
                 {
                     PlayCardUICs[y, x].SetCardHighlightStatus(CardHighlightStatus.Selectable);
-                }                
+                }
 
                 if (FensterGameManagerInstance.Field[y, x].Value.Revealed)
                 {
