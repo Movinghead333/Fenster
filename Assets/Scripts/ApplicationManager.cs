@@ -1,16 +1,17 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ApplicationManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public Button QuitApplicationButton;
+
+    private void Awake()
     {
-        
+        QuitApplicationButton.onClick.AddListener(OnQuitApplicationButtonPressed);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnQuitApplicationButtonPressed()
     {
-        
+        Application.Quit();
     }
 }

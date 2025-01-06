@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.convalise.unity-material-symbols": "https://github.com/convalise/unity-material-symbols.git?path=/src/UnityMaterialSymbols/Assets/MaterialSymbols",
     "com.movinghead333.codeconsole": "https://github.com/Movinghead333/CodeConsole.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.4",
@@ -12,6 +13,7 @@
     "com.unity.services.leaderboards": "2.2.1",
     "com.unity.test-framework": "1.4.5",
     "com.unity.timeline": "1.8.7",
+    "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.10",
     "com.unity.ugui": "2.0.0",
     "com.unity.visualscripting": "1.9.4",
     "com.unity.modules.accessibility": "1.0.0",
