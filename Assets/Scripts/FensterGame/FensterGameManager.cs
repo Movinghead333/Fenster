@@ -107,6 +107,8 @@ namespace FensterGame
                 }
             }
 
+            guessIsCorrect |= IncorrectGuesses > 2; // TESTing
+
             cardToReveal.Revealed = true;
             Field[command.Y, command.X] = cardToReveal;
             WaitingForContinueAfterIncorrectGuess = !guessIsCorrect;
@@ -178,17 +180,17 @@ namespace FensterGame
 
         public bool IsGameFinished()
         {
-            bool allRevealed = true;
+            bool gameFinished = !WaitingForContinueAfterIncorrectGuess;
 
             foreach (Card? card in Field)
             {
                 if (card != null)
                 {
-                    allRevealed &= card.Value.Revealed;
+                    gameFinished &= card.Value.Revealed;
                 }
             }
 
-            return allRevealed;
+            return gameFinished;
         }
 
         private void FillFieldWithCards()

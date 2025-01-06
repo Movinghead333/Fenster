@@ -31,6 +31,7 @@ public class FensterUIC : MonoBehaviour
     public PlayCardUIC[,] PlayCardUICs;
     public FensterGameManager FensterGameManagerInstance;
     public GameObject GuessButtonsPanel;
+    public GameObject GameFinishedPanel;
 
     public Vector2Int? SelectedCardCoordinates = null;
     public GuessType? SelectedGuessType = null;
@@ -71,7 +72,7 @@ public class FensterUIC : MonoBehaviour
     private void Update()
     {
         int seconds = _stopwatch.Elapsed.Seconds;
-        StatsPanelUIC.SetTimeText(new DateTime(_stopwatch.Elapsed.Ticks).ToString("mm:ss"));
+        StatsPanelUIC.SetTimeText(GetTimerString());
     }
 
     public void OnCardSelected(Vector2Int cardCoordinates)
@@ -135,6 +136,24 @@ public class FensterUIC : MonoBehaviour
         ProcessGuess();
     }
 
+    public void OnSaveAndReset()
+    {
+        // Save score
+
+        // Reset game
+        FensterGameManagerInstance = new FensterGameManager();
+        StatsPanelUIC.SetIncorrectGuessesText(FensterGameManagerInstance.IncorrectGuesses);
+        StatsPanelUIC.SetCardsRerolledText(FensterGameManagerInstance.CardsRerolled);
+        UpdateCards();
+        _stopwatch.Restart();
+    }
+
+    public string GetTimerString()
+    {
+        DateTime time = new DateTime(_stopwatch.Elapsed.Ticks);
+        return $"{time:mm}m{time:ss}s";
+    }
+
     private void ProcessGuess()
     {
         if (SelectedCardCoordinates.HasValue && SelectedGuessType.HasValue)
@@ -149,6 +168,11 @@ public class FensterUIC : MonoBehaviour
             SelectedCardCoordinates = null;
             GuessButtonsPanel.gameObject.SetActive(false);
             UpdateCards();
+
+            if (FensterGameManagerInstance.IsGameFinished())
+            {
+                GameFinishedPanel.SetActive(true);
+            }
         }
     }
 
