@@ -26,9 +26,17 @@ namespace FensterGame
 
         private readonly System.Random _rng;
 
-        public FensterGameManager()
+        public FensterGameManager(bool useRandomSeed = true)
         {
-            _rng = new System.Random(Seed);
+            if (useRandomSeed)
+            {
+                _rng = new System.Random();
+            }
+            else
+            {
+                _rng = new System.Random(/*Seed*/);
+            }
+
             Field = new Card?[FensterLayout.GetLength(0), FensterLayout.GetLength(1)];
             Deck = new List<Card>();
 
@@ -107,7 +115,7 @@ namespace FensterGame
                 }
             }
 
-            guessIsCorrect |= IncorrectGuesses > 2; // TESTing
+            //guessIsCorrect |= IncorrectGuesses > 2; // TESTing
 
             cardToReveal.Revealed = true;
             Field[command.Y, command.X] = cardToReveal;

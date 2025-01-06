@@ -19,9 +19,9 @@ public class GameFinishedPanelUIC : MonoBehaviour
         _scoreText.text = $"You took a time of {time}, {incorrectGuesses} incorrect guesses and {cardsRerolled} cards rerolled to open the Fenster!";
     }
 
-    public void OnSaveAndResetButtonPressed()
+    public async void OnSaveAndResetButtonPressed()
     {
-        FensterUIC.Instance.OnSaveAndReset();
+        await FensterUIC.Instance.OnSaveAndReset(_playerNameInputField.text);
         gameObject.SetActive(false);
     }
 }

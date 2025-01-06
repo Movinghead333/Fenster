@@ -1,6 +1,7 @@
 using FensterGame;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Stopwatch = System.Diagnostics.Stopwatch;
@@ -26,6 +27,7 @@ public class FensterUIC : MonoBehaviour
 
     public GameObject GameCanvas;
     public SpriteManager SpriteManager;
+    public LeaderboardManager LeaderboardManager;
     public StatsPanelUIC StatsPanelUIC;
     public GameObject PlayCardPrefab;
     public PlayCardUIC[,] PlayCardUICs;
@@ -136,9 +138,14 @@ public class FensterUIC : MonoBehaviour
         ProcessGuess();
     }
 
-    public void OnSaveAndReset()
+    public async Task OnSaveAndReset(string playerName)
     {
         // Save score
+        playerName = playerName.Replace(' ', '_');
+        playerName = playerName.Substring(0, Mathf.Min(20, playerName.Length));
+        await LeaderboardManager.UpdatePlayerName(playerName);
+        await LeaderboardManager.AddScore(FensterGameManagerInstance.IncorrectGuesses);
+        LeaderboardManager.LoadScores();
 
         // Reset game
         FensterGameManagerInstance = new FensterGameManager();
