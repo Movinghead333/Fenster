@@ -104,7 +104,13 @@ public class FensterUIC : MonoBehaviour
             }
 
             GuessButtonsPanel.gameObject.SetActive(true);
-            GuessButtonsPanel.transform.position = Input.mousePosition;
+            var guessButtonsPanelRectTransform = (RectTransform)GuessButtonsPanel.transform;
+            Vector2 panelSize = new Vector2(250, 150);
+            Vector2 maxPos = new Vector2(Screen.width - panelSize.x, Screen.height - panelSize.y);
+            maxPos = new Vector2(Screen.width * 0.85f, Screen.height * 0.15f);
+            Vector3 panelPosition = new Vector3(Mathf.Min(Input.mousePosition.x, maxPos.x), Mathf.Max(Input.mousePosition.y, maxPos.y), 0);
+
+            GuessButtonsPanel.transform.position = panelPosition;
 
             SelectedCardCoordinates = cardCoordinates;
             PlayCardUICs[SelectedCardCoordinates.Value.y, SelectedCardCoordinates.Value.x].SetCardHighlightStatus(CardHighlightStatus.Selected);
